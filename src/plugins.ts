@@ -1,7 +1,8 @@
-import { Widget } from "@ckeditor/ckeditor5-widget";
-import { toWidget, viewToModelPositionOutsideModelElement } from "@ckeditor/ckeditor5-widget/src/utils";
-import Command from "@ckeditor/ckeditor5-core/src/command";
-import {Plugin} from "@ckeditor/ckeditor5-core";
+import { Widget, toWidget, viewToModelPositionOutsideModelElement } from "@ckeditor/ckeditor5-widget";
+import { Command, Plugin, Editor } from "@ckeditor/ckeditor5-core";
+import ModelElement from "@ckeditor/ckeditor5-engine/src/model/element.js";
+import Node from "@ckeditor/ckeditor5-engine/src/model/node.js";
+import DowncastWriter from "@ckeditor/ckeditor5-engine/src/view/downcastwriter.js";
 
 export class EmTagItalicPlugin extends Plugin {
 	init() {
@@ -10,10 +11,11 @@ export class EmTagItalicPlugin extends Plugin {
 			view: 'em',
 			converterPriority: 'high',
 		});
-		this.editor.conversion.for('editingDowncast').attributeToElement({
+		this.editor.conversion.for<'editingDowncast'>('editingDowncast').attributeToElement({
 			model: 'italic',
 			view: 'em',
 			converterPriority: 'high',
+			// @ts-ignore
 			upcastAlso: ['i', { styles: { 'font-style': 'italic' } }],
 		});
 	}
@@ -55,9 +57,12 @@ export class MergeFieldPlugin extends Plugin {
 				// Seems that older iOS versions (<= 13) don't handle the optional chaining operator (?.) very well.
 				const element = viewElement.getChild(0);
 				if (element) {
+					// @ts-ignore
 					const name = element.data;
 					if (name) return modelWriter.createElement('mergeField', { name });
+					return null;
 				}
+				return null;
 			}
 		});
 
@@ -75,8 +80,8 @@ export class MergeFieldPlugin extends Plugin {
 		});
 
 		// Helper method for both downcast converters.
-		function createMergeFieldView(modelItem, viewWriter) {
-			const name = modelItem.getAttribute('name');
+		function createMergeFieldView(modelItem: ModelElement, viewWriter: DowncastWriter) {
+			const name = modelItem.getAttribute('name') as string;
 
 			const mergeFieldView = viewWriter.createContainerElement('span', {
 				class: 'mergeField'
@@ -91,7 +96,7 @@ export class MergeFieldPlugin extends Plugin {
 }
 
 class MergeFieldCommand extends Command {
-	execute( { value } ) {
+	override execute( { value }: { value: string } ) {
 		const editor = this.editor;
 		const selection = editor.model.document.selection;
 
@@ -105,11 +110,11 @@ class MergeFieldCommand extends Command {
 		} );
 	}
 
-	refresh() {
+	override refresh() {
 		const model = this.editor.model;
 		const selection = model.document.selection;
 
-		const isAllowed = model.schema.checkChild( selection.focus.parent, 'mergeField' );
+		const isAllowed = model.schema.checkChild( selection.focus?.parent as Node, 'mergeField' );
 
 		this.isEnabled = isAllowed;
 	}
@@ -122,7 +127,6 @@ export class IndentParagraph extends Plugin {
 
 	init() {
 		const editor = this.editor;
-
 		const keystrokes = [
 			{ key: 'Tab', action: 'increase' },
 			{ key: 'Shift+Tab', action: 'decrease' },
@@ -144,13 +148,13 @@ export class IndentParagraph extends Plugin {
 		});
 	}
 
-	adjustParagraphIndent(editor, action) {
+	adjustParagraphIndent(editor: Editor, action: string) {
 		const selection = editor.model.document.selection;
 		const position = selection.getFirstPosition();
-		const paragraph = position.findAncestor('paragraph');
+		const paragraph = position && position.findAncestor('paragraph');
 		if (position && position.isAtStart && paragraph) {
 			const viewElement = editor.editing.mapper.toViewElement(paragraph);
-			let currentIndentStr = (viewElement && viewElement.getStyle('text-indent')) || paragraph.getAttribute('textIndent') || '0';
+			let currentIndentStr = (viewElement && viewElement.getStyle('text-indent')) || (paragraph.getAttribute('textIndent') as string | undefined) || '0';
 			const currentIndent = parseInt(currentIndentStr, 10);
 			const change = action === 'increase' ? IndentParagraph.defaultIndentSize : -IndentParagraph.defaultIndentSize;
 			const newIndentValue = Math.max(currentIndent + change, 0);

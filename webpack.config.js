@@ -17,7 +17,7 @@ module.exports = {
 	devtool: 'source-map',
 	performance: { hints: false },
 
-	entry: path.resolve( __dirname, 'src', 'ckeditor.js' ),
+	entry: path.resolve( __dirname, 'src', 'ckeditor.ts' ),
 
 	output: {
 		// The name under which the editor will be exported.
@@ -58,6 +58,11 @@ module.exports = {
 	module: {
 		rules: [
 			{
+				test: /\.tsx?$/,
+				use: 'ts-loader',
+				exclude: /node_modules/,
+			},
+			{
 				test: /\.svg$/,
 				use: [ 'raw-loader' ]
 			},
@@ -88,5 +93,8 @@ module.exports = {
 				]
 			}
 		]
+	},
+	resolve: {
+		extensions: ['.ts', '.js']
 	}
 };

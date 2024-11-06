@@ -37,8 +37,8 @@ import { Mention } from '@ckeditor/ckeditor5-mention';
 import { Indent, IndentBlock } from '@ckeditor/ckeditor5-indent';
 import { ImportWord } from '@ckeditor/ckeditor5-import-word';
 import { EmTagItalicPlugin, MergeFieldPlugin, IndentParagraph } from './plugins'
-import * as DOMPurify from 'dompurify';
-import * as sanitizeHtml from 'sanitize-html';
+import DOMPurify from 'dompurify';
+import sanitizeHtml from 'sanitize-html';
 
 export default class ClassicEditor extends ClassicEditorBase {}
 
@@ -104,6 +104,7 @@ ClassicEditor.builtinPlugins = [
 
 // Editor configuration.
 ClassicEditor.defaultConfig = {
+  // @ts-ignore
   allowedContent: true,
   roundedCorners: true,
   toolbar: {
