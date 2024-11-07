@@ -33,107 +33,14 @@ import { TextTransformation } from '@ckeditor/ckeditor5-typing';
 import { CloudServices } from '@ckeditor/ckeditor5-cloud-services';
 import { HtmlEmbed } from '@ckeditor/ckeditor5-html-embed';
 import { MediaEmbed } from '@ckeditor/ckeditor5-media-embed';
-import { Plugin } from '@ckeditor/ckeditor5-core';
-import { Widget } from "@ckeditor/ckeditor5-widget";
 import { Mention } from '@ckeditor/ckeditor5-mention';
 import { Indent, IndentBlock } from '@ckeditor/ckeditor5-indent';
-import { IndentParagraph } from '@lawmatics/ckeditor5-paragraph-indent';
 import { ImportWord } from '@ckeditor/ckeditor5-import-word';
-import MergeFieldCommand from "./commands/mergeFieldCommand";
+import { EmTagItalicPlugin, MergeFieldPlugin, IndentParagraph } from './plugins'
 import * as DOMPurify from 'dompurify';
 import * as sanitizeHtml from 'sanitize-html';
 
-
-
-import { toWidget, viewToModelPositionOutsideModelElement } from '@ckeditor/ckeditor5-widget/src/utils';
-
 export default class ClassicEditor extends ClassicEditorBase {}
-
-class EmTagItalicPlugin extends Plugin {
-  init() {
-    this.editor.conversion.for('downcast').attributeToElement({
-      model: 'italic',
-      view: 'em',
-      converterPriority: 'high',
-    });
-    this.editor.conversion.for('editingDowncast').attributeToElement({
-      model: 'italic',
-      view: 'em',
-      converterPriority: 'high',
-      upcastAlso: ['i', { styles: { 'font-style': 'italic' } }],
-    });
-  }
-}
-
-class MergeFieldPlugin extends Plugin {
-  static get requires() {
-    return [Widget];
-  }
-  init() {
-    this._defineSchema();
-    this._defineConverters();
-    this.editor.commands.add('mergeField', new MergeFieldCommand(this.editor));
-    this.editor.editing.mapper.on(
-      'viewToModelPosition',
-      viewToModelPositionOutsideModelElement(this.editor.model, viewElement => viewElement.hasClass('mergeField'))
-    );
-  }
-
-  _defineSchema() {
-    const schema = this.editor.model.schema;
-
-    schema.register('mergeField', {
-      allowWhere: '$text',
-      isInline: true,
-      isObject: true,
-      allowAttributesOf: '$text',
-      allowAttributes: ['name']
-    });
-  }
-
-  _defineConverters() {
-    const conversion = this.editor.conversion;
-
-    conversion.for('upcast').elementToElement({
-      view: { name: 'span', classes: ['mergeField'] },
-      model: (viewElement, { writer: modelWriter }) => {
-		// Seems that older iOS versions (<= 13) don't handle the optional chaining operator (?.) very well.
-		const element = viewElement.getChild(0);
-		if (element) {
-			const name = element.data;
-			if (name) return modelWriter.createElement('mergeField', { name });
-		}
-      }
-    });
-
-    conversion.for('editingDowncast').elementToElement({
-      model: 'mergeField',
-      view: (modelItem, { writer: viewWriter }) => {
-        const widgetElement = createMergeFieldView(modelItem, viewWriter);
-        return toWidget(widgetElement, viewWriter);
-      }
-    });
-
-    conversion.for('dataDowncast').elementToElement({
-      model: 'mergeField',
-      view: (modelItem, { writer: viewWriter }) => createMergeFieldView(modelItem, viewWriter)
-    });
-
-    // Helper method for both downcast converters.
-    function createMergeFieldView(modelItem, viewWriter) {
-      const name = modelItem.getAttribute('name');
-
-      const mergeFieldView = viewWriter.createContainerElement('span', {
-        class: 'mergeField'
-      });
-
-      const innerText = viewWriter.createText(name);
-      viewWriter.insert(viewWriter.createPositionAt(mergeFieldView, 0), innerText);
-
-      return mergeFieldView;
-    }
-  }
-}
 
 // Plugins to include in the build.
 ClassicEditor.builtinPlugins = [
@@ -190,7 +97,6 @@ ClassicEditor.builtinPlugins = [
   MediaEmbed,
   Mention,
   ImportWord,
-
   EmTagItalicPlugin,
   TextTransformation,
   MergeFieldPlugin,
