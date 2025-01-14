@@ -96,7 +96,7 @@ class MergeFieldPlugin extends Plugin {
 
 		conversion.for('upcast').elementToElement({
 			view: { name: 'span', classes: ['mergeField']},
-			model: (viewElement, { writer: modelWriter }) => {
+			model: (viewElement, { writer: modelWriter, consumable}) => {
 				// Seems that older iOS versions (<= 13) don't handle the optional chaining operator (?.) very well.
 				const element = viewElement.getChild(0);
 				if (element) {
@@ -105,7 +105,6 @@ class MergeFieldPlugin extends Plugin {
 
 					// We need to "consume" the id attribute explicitly so ckeditor know's it's handled
 					// and does not try to handle it itself
-					const consumable = modelWriter.document.consumable;
 					consumable.consume(viewElement, { attributes: ['id'] });
 
 					if (name) return modelWriter.createElement('mergeField', {
