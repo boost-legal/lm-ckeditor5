@@ -87,7 +87,7 @@ class MergeFieldPlugin extends Plugin {
       isInline: true,
       isObject: true,
       allowAttributesOf: '$text',
-      allowAttributes: ['name']
+      allowAttributes: ['name', 'id']
     });
   }
 
