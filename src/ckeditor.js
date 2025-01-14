@@ -101,7 +101,7 @@ class MergeFieldPlugin extends Plugin {
 				const element = viewElement.getChild(0);
 				if (element) {
 					const name = element.data;
-					const id = element.getAttribute('id');
+					const id = viewElement.getAttribute('id');
 					if (name) return modelWriter.createElement('mergeField', {
 						name,
 						...(id ? { id } : {}),
