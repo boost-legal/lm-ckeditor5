@@ -102,6 +102,12 @@ class MergeFieldPlugin extends Plugin {
 				if (element) {
 					const name = element.data;
 					const id = viewElement.getAttribute('id');
+
+					// We need to "consume" the id attribute explicitly so ckeditor know's it's handled
+					// and does not try to handle it itself
+					const consumable = modelWriter.document.consumable;
+					consumable.consume(viewElement, { attributes: ['id'] });
+
 					if (name) return modelWriter.createElement('mergeField', {
 						name,
 						...(id ? { id } : {}),
