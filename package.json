@@ -1,6 +1,6 @@
 {
   "name": "@lawmatics/ckeditor5-build-classic",
-  "version": "41.3.9",
+  "version": "41.3.10",
   "description": "Lawmatics' custom CKeditor5 build",
   "main": "./build/ckeditor.js",
   "files": [
@@ -40,7 +40,7 @@
     "@ckeditor/ckeditor5-table": "^41.3.1",
     "@ckeditor/ckeditor5-typing": "^41.3.1",
     "@ckeditor/ckeditor5-widget": "^41.3.1",
-    "@lawmatics/ckeditor5-paragraph-indent": "^1.0.4",
+    "@lawmatics/ckeditor5-paragraph-indent": "^1.0.5",
     "dompurify": "^3.1.2",
     "sanitize-html": "^2.13.0"
   },
