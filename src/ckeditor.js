@@ -313,7 +313,8 @@ ClassicEditor.defaultConfig = {
 				attributes: [
 					{ key: /^on(.*)/i, value: true },
 					{ key: /.*/, value: /(\b)(on\S+)(\s*)=|javascript:|(<\s*)(\/*)script/i },
-		  { key: /.*/, value: /data:(?!image\/(png|jpeg|gif|webp))/i }
+					{ key: /.*/, value: /data:(?!image\/(png|jpeg|gif|webp))/i },
+					{ key: 'contenteditable', value: true }
 				]
 			},
 			{ name: 'script' }
