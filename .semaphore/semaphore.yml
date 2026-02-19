@@ -6,12 +6,14 @@ agent:
     os_image: ubuntu2404
 auto_cancel:
   queued:
-    when: "branch = 'master'"
+    when: "branch != 'master'"
+  running:
+    when: "branch != 'master'"
 blocks:
   - name: Build
     dependencies: []
     run:
-      when: "branch = 'develop'"
+      when: "pull_request =~ '.*' OR branch = 'develop'"
     task:
       jobs:
         - name: Build
