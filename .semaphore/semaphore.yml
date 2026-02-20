@@ -3,11 +3,25 @@ name: CKEditor build
 agent:
   machine:
     type: e1-standard-2
-    os_image: ubuntu2004
+    os_image: ubuntu2404
 auto_cancel:
   queued:
-    when: "branch = 'master'"
+    when: "branch != 'master'"
+  running:
+    when: "branch != 'master'"
 blocks:
+  - name: Build
+    dependencies: []
+    run:
+      when: "pull_request =~ '.*' OR branch = 'develop'"
+    task:
+      jobs:
+        - name: Build
+          commands:
+            - checkout
+            - sem-version node 20.6.1
+            - npm ci
+            - npm run build
   - name: Build & Publish
     dependencies: []
     run:
