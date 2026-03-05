@@ -1,6 +1,6 @@
 {
   "name": "@lawmatics/ckeditor5-build-classic",
-  "version": "41.3.11",
+  "version": "41.4.0",
   "description": "Lawmatics' custom CKeditor5 build",
   "main": "./build/ckeditor.js",
   "files": [
