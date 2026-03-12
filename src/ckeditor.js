@@ -87,7 +87,7 @@ class MergeFieldPlugin extends Plugin {
 			isInline: true,
 			isObject: true,
 			allowAttributesOf: '$text',
-			allowAttributes: ['name', 'id']
+			allowAttributes: ['name', 'id', 'displayName']
 		});
 	}
 
@@ -118,7 +118,7 @@ class MergeFieldPlugin extends Plugin {
 		conversion.for('editingDowncast').elementToElement({
 			model: 'mergeField',
 			view: (modelItem, { writer: viewWriter }) => {
-				const widgetElement = createMergeFieldView(modelItem, viewWriter);
+				const widgetElement = createMergeFieldView(modelItem, viewWriter, { useDisplayName: true });
 				return toWidget(widgetElement, viewWriter);
 			}
 		});
@@ -129,16 +129,17 @@ class MergeFieldPlugin extends Plugin {
 		});
 
 		// Helper method for both downcast converters.
-		function createMergeFieldView(modelItem, viewWriter) {
+		function createMergeFieldView(modelItem, viewWriter, { useDisplayName = false } = {}) {
 			const name = modelItem.getAttribute('name');
 			const id = modelItem.getAttribute('id');
+			const displayName = modelItem.getAttribute('displayName');
 
 			const mergeFieldView = viewWriter.createContainerElement('span', {
 				class: 'mergeField',
 				...(id ? { id } : {}),
 			});
 
-			const innerText = viewWriter.createText(name);
+			const innerText = viewWriter.createText(useDisplayName && displayName ? displayName : name);
 			viewWriter.insert(viewWriter.createPositionAt(mergeFieldView, 0), innerText);
 
 			return mergeFieldView;
