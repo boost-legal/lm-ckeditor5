@@ -2,7 +2,7 @@ version: v1.0
 name: CKEditor build
 agent:
   machine:
-    type: e1-standard-2
+    type: f1-standard-2
     os_image: ubuntu2404
 auto_cancel:
   queued:
