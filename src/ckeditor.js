@@ -301,9 +301,9 @@ ClassicEditor.defaultConfig = {
 	},
 	htmlSupport: {
 		allow: [
-			// Enables all HTML features.
+			// Formatting/structure only - a catch-all also admits iframe/object/form and raw custom elements (GHSA-jrqm-vmqc-gm93).
 			{
-				name: /.*/,
+				name: /^(a|abbr|acronym|address|article|aside|b|bdi|bdo|big|blockquote|caption|center|cite|code|col|colgroup|dd|del|details|dfn|dir|div|dl|dt|em|figcaption|figure|font|footer|h[1-6]|header|hgroup|i|img|ins|kbd|label|li|main|mark|menu|nav|ol|p|pre|q|s|samp|section|small|span|strong|style|sub|summary|sup|table|tbody|td|tfoot|th|thead|time|tr|tt|u|ul|var)$/,
 				attributes: true,
 				classes: true,
 				styles: true
@@ -313,7 +313,7 @@ ClassicEditor.defaultConfig = {
 			{
 				attributes: [
 					{ key: /^on(.*)/i, value: true },
-					{ key: /.*/, value: /(\b)(on\S+)(\s*)=|javascript:|(<\s*)(\/*)script/i },
+					{ key: /.*/, value: /(\b)(on\S+)(\s*)=|j\s*a\s*v\s*a\s*s\s*c\s*r\s*i\s*p\s*t\s*:|(<\s*)(\/*)script/i },
 					{ key: /.*/, value: /data:(?!image\/(png|jpeg|gif|webp))/i },
 					{ key: 'contenteditable', value: true }
 				]
