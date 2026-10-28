@@ -19,7 +19,7 @@ blocks:
         - name: Build
           commands:
             - checkout
-            - sem-version node 20.6.1
+            - sem-version node 22.22.3
             - npm ci
             - npm run build
   - name: Build & Publish
@@ -33,7 +33,7 @@ blocks:
         - name: Build & Publish
           commands:
             - checkout
-            - sem-version node 20.6.1
+            - sem-version node 22.22.3
             - npm ci
             - npm run build
             - npm config set '//registry.npmjs.org/:_authToken' "${NPM_TOKEN}"

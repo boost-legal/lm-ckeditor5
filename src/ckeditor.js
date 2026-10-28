@@ -40,8 +40,8 @@ import { Indent, IndentBlock } from '@ckeditor/ckeditor5-indent';
 import { IndentParagraph } from '@lawmatics/ckeditor5-paragraph-indent';
 import { ImportWord } from '@ckeditor/ckeditor5-import-word';
 import MergeFieldCommand from "./commands/mergeFieldCommand";
-import * as DOMPurify from 'dompurify';
-import * as sanitizeHtml from 'sanitize-html';
+import DOMPurify from 'dompurify';
+import sanitizeHtml from 'sanitize-html';
 
 
 
