@@ -1,0 +1,34 @@
+version: v1.0
+name: Publish prerelease
+agent:
+  machine:
+    type: f1-standard-2
+    os_image: ubuntu2404
+# Manual promotion from a branch/PR pipeline. Publishes the branch's build as
+# <package.json version>-<branch-slug>.<workflow number> under the "pr" dist-tag,
+# so `latest` never moves and semver ranges like ^41 never resolve to it.
+# Use it to test an unreleased build in a boost-client PR by pinning that exact version.
+blocks:
+  - name: Publish prerelease
+    task:
+      secrets:
+        - name: npm-env-vars
+      jobs:
+        - name: Build & Publish prerelease
+          commands:
+            - |
+              if [ "$SEMAPHORE_GIT_WORKING_BRANCH" = "master" ]; then
+                echo "Prereleases are for branches; master publishes through the main pipeline." >&2
+                exit 1
+              fi
+            - checkout
+            - sem-version node 20.6.1
+            - npm ci
+            - npm run build
+            - BASE_VERSION=$(node -p "require('./package.json').version")
+            - SLUG=$(echo "$SEMAPHORE_GIT_WORKING_BRANCH" | sed -E 's/[^0-9A-Za-z-]+/-/g' | cut -c1-40 | sed -E 's/^-+|-+$//g')
+            - PRERELEASE="${BASE_VERSION}-${SLUG}.${SEMAPHORE_WORKFLOW_NUMBER}"
+            - npm version "$PRERELEASE" --no-git-tag-version
+            - npm config set '//registry.npmjs.org/:_authToken' "${NPM_TOKEN}"
+            - npm publish --tag pr
+            - 'echo "Published @lawmatics/ckeditor5-build-classic@${PRERELEASE} (dist-tag: pr)"'
