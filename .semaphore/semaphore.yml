@@ -19,7 +19,7 @@ blocks:
         - name: Build
           commands:
             - checkout
-            - sem-version node 20.6.1
+            - sem-version node 22.22.3
             - npm ci
             - npm run build
   - name: Build & Publish
@@ -33,8 +33,15 @@ blocks:
         - name: Build & Publish
           commands:
             - checkout
-            - sem-version node 20.6.1
+            - sem-version node 22.22.3
             - npm ci
             - npm run build
-            - npm config set '//registry.npmjs.org/:_authToken' "${NPM_TOKEN}"
-            - npm publish
+            # Versions are hand-published while the npm token is broken, so skip ones already on the registry.
+            - PKG="$(node -p 'require("./package.json").name')@$(node -p 'require("./package.json").version')"
+            - |
+              if npm view "$PKG" version >/dev/null 2>&1; then
+                echo "$PKG is already published, skipping"
+              else
+                npm config set '//registry.npmjs.org/:_authToken' "${NPM_TOKEN}"
+                npm publish
+              fi
