@@ -38,3 +38,6 @@ blocks:
             - npm run build
             - npm config set '//registry.npmjs.org/:_authToken' "${NPM_TOKEN}"
             - npm publish
+promotions:
+  - name: Publish prerelease
+    pipeline_file: publish-prerelease.yml
